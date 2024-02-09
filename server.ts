@@ -37,8 +37,17 @@ function getServer(): grpc.Server {
     },
     RandomNumbers: (call) => {
       const { maxVal = 10 } = call.request;
-      call.write({ num: Math.floor(Math.random() * maxVal) });
-      call.end();
+
+      let runCount = 0;
+      const id = setInterval(() => {
+        runCount = ++runCount;
+        call.write({ num: Math.floor(Math.random() * maxVal) });
+
+        if (runCount >= 10) {
+          clearInterval(id);
+          call.end();
+        }
+      }, 500);
     },
   } as RandomHandlers);
   return server;
