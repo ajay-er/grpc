@@ -1,7 +1,7 @@
 {
-  "name": "grpc-todo",
+  "name": "grpc-basics",
   "version": "1.0.0",
-  "description": "",
+  "description": "learn grpc!cool",
   "main": "index.js",
   "scripts": {
     "start": "tsx server.ts",
