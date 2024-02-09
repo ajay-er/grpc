@@ -33,7 +33,14 @@ function onClientReady() {
       console.error(err);
       return;
     }
+    console.log(result);
+  });
 
-    console.log(result)
+  const stream = client.RandomNumbers({ maxVal: 85 });
+  stream.on("data", (chunk) => {
+    console.log(chunk);
+  });
+  stream.on("end", () => {
+    console.log("communication ended!")
   });
 }

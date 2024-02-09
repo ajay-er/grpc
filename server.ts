@@ -15,21 +15,30 @@ const randomPackage = grpcObj.randomPackage;
 
 function main() {
   const server = getServer();
-  server.bindAsync(`0.0.0.0:${PORT}`,grpc.ServerCredentials.createInsecure(),(err,port)=>{
-    if(err) {
+  server.bindAsync(
+    `0.0.0.0:${PORT}`,
+    grpc.ServerCredentials.createInsecure(),
+    (err, port) => {
+      if (err) {
         console.error(err);
-        return 
+        return;
+      }
+      console.log("Server started on PORT:", port);
     }
-    console.log("Server started on PORT:",port)
-  })
+  );
 }
 
 function getServer(): grpc.Server {
   const server = new grpc.Server();
   server.addService(randomPackage.Random.service, {
-    PingPong: (req,res) => {
-        console.log(req.request)
-        res(null,{message:"Pong"})
+    PingPong: (req, res) => {
+      console.log(req.request);
+      res(null, { message: "Pong" });
+    },
+    RandomNumbers: (call) => {
+      const { maxVal = 10 } = call.request;
+      call.write({ num: Math.floor(Math.random() * maxVal) });
+      call.end();
     },
   } as RandomHandlers);
   return server;
