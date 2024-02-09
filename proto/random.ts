@@ -14,6 +14,8 @@ export interface ProtoGrpcType {
     PingRequest: MessageTypeDefinition
     PongResponse: MessageTypeDefinition
     Random: SubtypeConstructor<typeof grpc.Client, _randomPackage_RandomClient> & { service: _randomPackage_RandomDefinition }
+    TodoRequest: MessageTypeDefinition
+    TodoResponse: MessageTypeDefinition
   }
 }
 

@@ -36,11 +36,25 @@ function onClientReady() {
     console.log(result);
   });
 
-  const stream = client.RandomNumbers({ maxVal: 85 });
-  stream.on("data", (chunk) => {
+  const stream1 = client.RandomNumbers({ maxVal: 85 });
+  stream1.on("data", (chunk) => {
     console.log(chunk);
   });
-  stream.on("end", () => {
-    console.log("communication ended!")
+  stream1.on("end", () => {
+    console.log("communication ended!");
   });
+
+  const stream2 = client.TodoList((err, result) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(result);
+  });
+
+  stream2.write({ todo: "get the bus", status: false });
+  stream2.write({ todo: "wash the dish", status: false });
+  stream2.write({ todo: "learn AI", status: false });
+  stream2.write({ todo: "learn python", status: false });
+  stream2.end()
 }
