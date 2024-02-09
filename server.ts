@@ -4,6 +4,8 @@ import * as protoloader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/random";
 import { RandomHandlers } from "./proto/randomPackage/Random";
 import { TodoResponse } from "./proto/randomPackage/TodoResponse";
+import { ChatRequest } from "./proto/randomPackage/ChatRequest";
+import { ChatResponse } from "./proto/randomPackage/ChatResponse";
 
 const PORT = 3000;
 const PROTO_FILE = "./proto/random.proto";
@@ -30,6 +32,10 @@ function main() {
 }
 
 const todoList: TodoResponse = { todos: [] };
+const usersChat = new Map<
+  string,
+  grpc.ServerDuplexStream<ChatRequest, ChatResponse>
+>();
 
 function getServer(): grpc.Server {
   const server = new grpc.Server();
@@ -59,6 +65,35 @@ function getServer(): grpc.Server {
       });
       call.on("end", () => {
         callback(null, { todos: todoList.todos });
+      });
+    },
+    Chat: (call) => {
+      call.on("data", (req) => {
+        const username = call.metadata.get("username")[0] as string;
+        const msg = req.message;
+        console.log(req)
+        for (const [user, userCall] of usersChat) {
+          if (username !== user) {
+            userCall.write({
+              message: msg,
+              username: username,
+            });
+          }
+        }
+
+        if (!usersChat.has(username)) {
+          usersChat.set(username, call);
+        }
+      });
+
+      call.on("end", () => {
+        const username = call.metadata.get("username")[0] as string;
+        usersChat.delete(username);
+        console.log(`${username} chat ended!`)
+        call.write({
+          message: `Connection end! ${username}`,
+        });
+        call.end();
       });
     },
   } as RandomHandlers);

@@ -6,6 +6,7 @@ service Random {
     rpc PingPong(PingRequest) returns (PongResponse) {};
     rpc RandomNumbers(NumberRequest) returns (stream NumberResponse) {};
     rpc TodoList(stream TodoRequest) returns (TodoResponse) {};
+    rpc Chat(stream ChatRequest) returns (stream ChatResponse) {};
 }
 
 message PingRequest {
@@ -31,5 +32,14 @@ message TodoRequest {
 
 message TodoResponse {
     repeated TodoRequest todos = 1;
+}
+
+message ChatRequest {
+    string message = 1;
+}
+
+message ChatResponse {
+    string username = 1;
+    string message = 2;
 }
 
