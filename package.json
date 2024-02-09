@@ -4,7 +4,7 @@
   "description": "learn grpc!cool",
   "main": "index.js",
   "scripts": {
-    "start": "tsx server.ts",
+    "server": "tsx server.ts",
     "client": "tsx client.ts",
     "proto:gen": "./proto-gen.sh"
   },
