@@ -71,7 +71,7 @@ function getServer(): grpc.Server {
       call.on("data", (req) => {
         const username = call.metadata.get("username")[0] as string;
         const msg = req.message;
-        console.log(req)
+        console.log(username, ":", req.message);
         for (const [user, userCall] of usersChat) {
           if (username !== user) {
             userCall.write({
@@ -89,7 +89,15 @@ function getServer(): grpc.Server {
       call.on("end", () => {
         const username = call.metadata.get("username")[0] as string;
         usersChat.delete(username);
-        console.log(`${username} chat ended!`)
+
+        //broadcast closing session
+        for (const [user, userCall] of usersChat) {
+          userCall.write({
+            message: "left the chat!",
+            username: username,
+          });
+        }
+        console.log(`${username} chat ended!`);
         call.write({
           message: `Connection end! ${username}`,
         });
